@@ -16,7 +16,7 @@ blogsRouter.post('/', async (request, response) => {
     author: body.author,
     url: body.url,
     likes: body.likes,
-    user: user._id
+    user: user._id,
   })
 
   const savedBlog = await blog.save()
@@ -27,7 +27,6 @@ blogsRouter.post('/', async (request, response) => {
   response.status(201).json(populatedBlog)
 })
 
-
 blogsRouter.delete('/:id', middlewares.blogBelongsToUser, async (request, response) => {
   const { user } = request
   const blogId = request.params.id
@@ -35,13 +34,14 @@ blogsRouter.delete('/:id', middlewares.blogBelongsToUser, async (request, respon
   user.blogs = user.blogs.filter((id) => id.toString() !== blogId)
   await user.save()
   response.status(200).json({
-    message: 'deleted successfully'
+    message: 'deleted successfully',
   })
 })
 
 blogsRouter.put('/like/:id', async (request, response) => {
   const blogToUpdate = request.params.id
-  const savedBlog = await Blog.findByIdAndUpdate(blogToUpdate, { $inc: { likes: 1 } }, { new: true })
+  const savedBlog = await Blog
+    .findByIdAndUpdate(blogToUpdate, { $inc: { likes: 1 } }, { new: true })
   const populatedBlog = await savedBlog.populate('user', { username: 1, name: 1 })
   if (populatedBlog) return response.status(200).json(populatedBlog)
   return response.status(404).end()

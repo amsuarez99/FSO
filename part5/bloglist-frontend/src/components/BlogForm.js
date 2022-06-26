@@ -3,26 +3,19 @@ const BlogForm = ({ handleSubmit }) => {
     <form onSubmit={handleSubmit}>
       <label>
         title
-        <input
-          type="text"
-          name="title"
-        />
+        <input type="text" name="title" />
       </label>
       <label>
         author
-        <input
-          type="text"
-          name="author"
-        />
+        <input type="text" name="author" />
       </label>
       <label>
         url
-        <input
-          type="text"
-          name="url"
-        />
+        <input type="text" name="url" />
       </label>
-      <button type="submit">Post</button>
+      <button id="submitPost" type="submit">
+        Post
+      </button>
     </form>
   )
 }
