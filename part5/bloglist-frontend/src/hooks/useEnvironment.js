@@ -15,6 +15,7 @@ export const EnvironmentProvider = ({children}) => {
   return <environment.Provider value={env} >{children}</environment.Provider>
 }
 
+// TODO: Notifications can be abstracted to their own hook
 export const useEnvironment = () => {
   const [context, setContext] = useContext(environment)
 
@@ -35,7 +36,33 @@ export const useEnvironment = () => {
     }))
   }, [setContext])
 
+  const showNotification =  useCallback((message, status) => {
+    setContext((prev) => {
+      if(prev.notification) {
+        // clear the timer if there is a notification clear pending
+        clearTimeout(prev.notification.timerId)
+      }
+
+      const newTimerId = setTimeout(() => {
+        setContext((prev) => ({
+          ...prev,
+          notification: null
+        }))
+      }, 5000)
+      return {
+          ...prev,
+          notification: {
+            timerId: newTimerId,
+            message,
+            status
+          }
+        }
+    })
+  }, [])
+
   return {
-    login, logout, user: context.user
+    showNotification,
+    notification: context.notification,
+    login, logout, user: context.user,
   }
 }

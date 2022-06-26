@@ -1,21 +1,22 @@
 const logger = require('./logger')
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
+const Blog = require('../models/blog')
 
-const tokenExtractor = ( request, response, next ) => {
+const tokenExtractor = (request, response, next) => {
   const authorization = request.get('authorization')
   if (authorization && authorization.toLowerCase().startsWith('bearer ')) {
-     request.token = authorization.substring(7)
+    request.token = authorization.substring(7)
   }
   next()
 }
 
 const userExtractor = async (request, response, next) => {
   const decodedToken = jwt.verify(request.token, process.env.SECRET)
-  if(!decodedToken.id) next({name: 'JsonWebTokenError', message: 'tokenId not found'})
+  if (!decodedToken.id) next({ name: 'JsonWebTokenError', message: 'tokenId not found' })
   const dbUser = await User.findById(decodedToken.id)
 
-  if(!dbUser) return response.status(404).json({
+  if (!dbUser) return response.status(404).json({
     error: 'Token user not found'
   })
 
@@ -24,10 +25,12 @@ const userExtractor = async (request, response, next) => {
 }
 
 const blogBelongsToUser = async (request, response, next) => {
-  const {user} = request
+  const { user } = request
   const blogId = request.params.id
+  console.log(blogId)
   const blog = await Blog.findById(blogId)
-  if(blog.user.toString() !== user._id.toString()) {
+  console.log(blog, user)
+  if (blog.user?.toString() !== user._id.toString()) {
     return response.status(401).json({
       error: 'only the owner can delete the blog'
     })
@@ -49,15 +52,16 @@ const unknownEndpoint = (request, response) => {
 
 const errorHandler = (error, request, response, next) => {
   logger.error('Error:', error.message)
+  logger.error('Error:', error.name)
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformed id' })
   } else
-  if (error.name === 'ValidationError') {
-    return response.status(400).json({ error: error.message })
-  }
-  if(error.name === 'JsonWebTokenError') {
-    return response.status(401).json({ error: 'invalid token' })
+    if (error.name === 'ValidationError') {
+      return response.status(400).send({ error: error.message })
+    }
+  if (error.name === 'JsonWebTokenError') {
+    return response.status(401).send({ error: 'invalid token' })
   }
 
   next(error)
