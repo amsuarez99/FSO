@@ -24,15 +24,17 @@ const notificationSlice = createSlice({
   },
 });
 
-export const scheduleNotification = (dispatch, content) => {
-  dispatch(clearNotification());
-  dispatch(showNotification(content));
-  const timeoutId = setTimeout(() => {
-    dispatch(clearNotification());
-  }, 5000);
-  dispatch(setTimer(timeoutId));
-};
-
 export const { showNotification, setTimer, clearNotification } =
   notificationSlice.actions;
+
+export const scheduleNotification = (content, time) => {
+  return async (dispatch) => {
+    dispatch(clearNotification());
+    dispatch(showNotification(content));
+    const timeoutId = setTimeout(() => {
+      dispatch(clearNotification());
+    }, time);
+    dispatch(setTimer(timeoutId));
+  };
+};
 export default notificationSlice.reducer;
