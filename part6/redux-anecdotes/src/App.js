@@ -1,5 +1,8 @@
 import { useSelector, useDispatch } from "react-redux";
 import { vote, newAnecdote } from "./reducers/anecdoteReducer";
+import Notification from "./components/Notification";
+import Filter from "./components/Filter";
+import { scheduleNotification } from "./reducers/notificationReducer";
 
 const Anecdote = ({ anecdote, handleClick }) => (
   <div>
@@ -12,9 +15,15 @@ const Anecdote = ({ anecdote, handleClick }) => (
 );
 
 const AnecdoteList = () => {
-  const anecdotes = useSelector((state) =>
-    state.sort((a, b) => b.votes - a.votes)
-  );
+  const anecdotes = useSelector((state) => {
+    const matchingAnecdotes = state.filter
+      ? state.anecdotes.filter((a) =>
+          a.content.toLowerCase().includes(state.filter)
+        )
+      : [...state.anecdotes];
+    const sortedAnecdotes = matchingAnecdotes.sort((a, b) => b.votes - a.votes);
+    return sortedAnecdotes;
+  });
   const dispatch = useDispatch();
 
   return (
@@ -23,7 +32,10 @@ const AnecdoteList = () => {
         <Anecdote
           key={anecdote.id}
           anecdote={anecdote}
-          handleClick={() => dispatch(vote(anecdote.id))}
+          handleClick={() => {
+            dispatch(vote(anecdote.id));
+            scheduleNotification(dispatch, `you voted '${anecdote.content}'`);
+          }}
         />
       ))}
     </>
@@ -56,7 +68,9 @@ const AnecdoteForm = () => {
 const App = () => {
   return (
     <div>
+      <Notification />
       <h2>Anecdotes</h2>
+      <Filter />
       <AnecdoteList />
       <AnecdoteForm />
     </div>
