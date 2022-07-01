@@ -5,14 +5,14 @@ module.exports = {
     node: true,
     jest: true,
   },
-  extends: [
-    'airbnb-base',
-  ],
+  extends: ['airbnb-base'],
   parserOptions: {
     ecmaVersion: 'latest',
   },
   rules: {
     semi: [2, 'never'],
+    'comma-dangle': 'off',
+    'operator-linebreak': 'off',
     'consistent-return': 'off',
     'no-underscore-dangle': 'off',
     'semi-style': ['error', 'first'],
