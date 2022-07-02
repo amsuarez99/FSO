@@ -87,22 +87,12 @@ let books = [
 ]
 
 const typeDefs = gql`
-  enum Genre {
-    classic
-    revolution
-    crime
-    design
-    refactoring
-    patterns
-    agile
-  }
-
   type Book {
     title: String!
     published: Int!
     author: String!
     id: ID!
-    genres: [Genre!]!
+    genres: [String!]!
   }
 
   type Author {
@@ -116,7 +106,7 @@ const typeDefs = gql`
     bookCount: Int!
     authorCount: Int!
     allAuthors: [Author!]!
-    allBooks(author: String, genre: Genre): [Book!]!
+    allBooks(author: String, genre: String): [Book!]!
   }
 
   type Mutation {
@@ -124,7 +114,7 @@ const typeDefs = gql`
       title: String!
       author: String!
       published: Int!
-      genres: [Genre!]!
+      genres: [String!]!
     ): Book
     editAuthor(name: String!, setBornTo: Int!): Author
   }
