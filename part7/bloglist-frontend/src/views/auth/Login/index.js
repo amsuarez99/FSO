@@ -1,6 +1,8 @@
 import { useDispatch } from 'react-redux'
 import { login } from '../../../reducers/userReducer'
 import { useForm } from '../../../hooks/useForm'
+import { initializeBlogs } from '../../../reducers/blogReducer'
+import { initializeUsers } from '../../../reducers/usersReducer'
 
 const Login = () => {
   const [credentials, handleChange, reset] = useForm({
@@ -12,6 +14,8 @@ const Login = () => {
   const handleSubmit = (event) => {
     event.preventDefault()
     dispatch(login(credentials))
+    dispatch(initializeBlogs())
+    dispatch(initializeUsers())
     reset()
   }
 

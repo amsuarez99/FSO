@@ -36,8 +36,6 @@ const App = () => {
     ? blogs?.find((blog) => blog.id === blogMatch.params.id)
     : null
 
-  useInitialize(user)
-
   if (user === null) {
     return (
       <Routes>
